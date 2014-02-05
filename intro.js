@@ -568,13 +568,26 @@
         _exitIntro.call(self, self._targetElement);
       };
 
-      buttonsLayer.appendChild(skipTooltipButton);
+      var exitLink = document.createElement('a');
+      exitLink.href = 'javascript:void(0);'
+      exitLink.innerHTML = "× Close";
+      exitLink.className = "pull-left introjs-closebutton introjs-button"
+      exitLink.onclick = function() {
+        if (typeof (self._introExitCallback) === 'function') {
+          self._introExitCallback.call(self);
+        }
+
+        _exitIntro.call(self, self._targetElement);
+      }
+      buttonsLayer.appendChild(exitLink);
 
       //in order to prevent displaying next/previous button always
       if (this._introItems.length > 1) {
         buttonsLayer.appendChild(prevTooltipButton);
         buttonsLayer.appendChild(nextTooltipButton);
       }
+
+      buttonsLayer.appendChild(skipTooltipButton);
 
       tooltipLayer.appendChild(buttonsLayer);
 
@@ -586,21 +599,22 @@
       // first step but not last
       prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
       nextTooltipButton.className = 'introjs-button introjs-nextbutton';
-      skipTooltipButton.innerHTML = this._options.skipLabel;
+      $(".introjs-skipbutton").hide();
+      nextTooltipButton.focus();
     } else if (this._introItems.length - 1 == this._currentStep || this._introItems.length == 1) {
       // last step
       skipTooltipButton.innerHTML = this._options.doneLabel;
-      prevTooltipButton.className = 'introjs-button introjs-prevbutton';
+      prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
       nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
+      $(".introjs-skipbutton").show();
+      skipTooltipButton.focus();
     } else {
       // some intermediate step
-      prevTooltipButton.className = 'introjs-button introjs-prevbutton';
+      prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
       nextTooltipButton.className = 'introjs-button introjs-nextbutton';
-      skipTooltipButton.innerHTML = this._options.skipLabel;
+      $(".introjs-skipbutton").hide();
+      nextTooltipButton.focus();
     }
-
-    //Set focus on "next" button, so that hitting Enter always moves you onto the next step
-    // nextTooltipButton.focus();
 
     //add target element position style
     targetElement.element.className += ' introjs-showElement';
